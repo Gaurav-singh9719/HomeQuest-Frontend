@@ -32,7 +32,7 @@ const OwnerDashboard = () => {
   useEffect(() => {
     fetchProperties();
    
-  }, [fetchApplications]);
+  }, [fetchProperties]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
