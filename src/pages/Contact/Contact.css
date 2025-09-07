@@ -1,0 +1,31 @@
+.contact {
+  padding: 1rem;
+  max-width: 500px;
+  margin: auto;
+}
+
+.contact form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contact input,
+.contact textarea {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.contact button {
+  background: #007bff;
+  border: none;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.contact button:hover {
+  background: #0069d9;
+}

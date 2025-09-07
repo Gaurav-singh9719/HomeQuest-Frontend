@@ -1,0 +1,17 @@
+.auth-page {
+  text-align: center;
+  padding: 2rem;
+}
+
+.auth-page button {
+  padding: 0.5rem 1rem;
+  background: #ff9800;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.auth-page button:hover {
+  background: #e68900;
+}

@@ -1,0 +1,10 @@
+.property-details {
+  padding: 1rem;
+}
+
+.property-details img {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
