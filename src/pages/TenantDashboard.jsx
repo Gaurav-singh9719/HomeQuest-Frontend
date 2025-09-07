@@ -41,7 +41,7 @@ const TenantDashboard = () => {
   useEffect(() => {
     fetchProperties();
     fetchApplications();
-  }, []);
+  }, [fetchApplications]);
 
  
   const applyForProperty = async (propertyId) => {
