@@ -1,6 +1,6 @@
-# 🏠 Rent Rover - Property Rental Management UI
+# 🏠 HomeQuest - Property Rental Management UI
 
-Rent Rover is a **React.js based rental property management UI** where **Owners** can add/delete properties, manage tenant requests, and **Tenants** can view properties, apply, and see their requests.  
+HomeQuest is a **React.js based rental property management UI** where **Owners** can add/delete properties, manage tenant requests, and **Tenants** can view properties, apply, and see their requests.  
 The app is responsive and works on both **laptops** and **mobile devices** with a collapsible navigation bar.
 
 ---
