@@ -15,7 +15,7 @@ const OwnerDashboard = () => {
     imagePreview: "", 
   });
 
-  // ✅ Wrap in useCallback
+
   const fetchProperties = useCallback(async () => {
     try {
       const res = await fetch(`${API}/api/owner/properties`, {
@@ -107,8 +107,7 @@ const OwnerDashboard = () => {
 
   return (
     <div className="owner-dashboard">
-      <h2>Welcome, {user?.email} 🏡</h2>
-      {/* Add Property Form */}
+      <h2>Welcome, {user?.name} 🏡</h2>
       <div className="add-property-form">
         <input type="text" name="title" placeholder="Title" value={newProperty.title} onChange={handleChange} />
         <input type="text" name="description" placeholder="Description" value={newProperty.description} onChange={handleChange} />
@@ -128,6 +127,7 @@ const OwnerDashboard = () => {
               {p.images?.[0] && <img src={p.images[0]} alt={p.title} />}
               <h4>{p.title}</h4>
               <p>{p.address}</p>
+              <p>{p.description}</p>
               <p>₹{p.price.toLocaleString()}</p>
               {p.requests?.length > 0 && (
                 <div className="tenant-requests">
