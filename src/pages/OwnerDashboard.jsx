@@ -107,7 +107,7 @@ const OwnerDashboard = () => {
 
   return (
     <div className="owner-dashboard">
-      <h2>Welcome, {user?.name} 🏡</h2>
+      <h2>Welcome, {user?.name}</h2>
       <div className="add-property-form">
         <input type="text" name="title" placeholder="Title" value={newProperty.title} onChange={handleChange} />
         <input type="text" name="description" placeholder="Description" value={newProperty.description} onChange={handleChange} />
