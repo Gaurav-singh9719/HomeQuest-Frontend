@@ -5,19 +5,8 @@ import "./Header.css";
 
 const Header = () => {
   const { user, logout } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Close mobile menu on window resize
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768) setIsMenuOpen(false);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Sticky navbar scroll effect
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -28,80 +17,45 @@ const Header = () => {
 
   return (
     <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
-      {/* Logo */}
-      <div className="logo">
-        <Link to="/" className="logo-link">
+      <div className="header-container">
+        {/* Logo */}
+        <Link to="/" className="logo">
           🏡 <span>HomeQuest</span>
         </Link>
-      </div>
 
-      {/* Desktop Navigation */}
-      <nav className="nav-links">
-        <Link to="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
-        <Link to="/properties" onClick={() => setIsMenuOpen(false)}>Properties</Link>
-        <Link to="/contact" onClick={() => setIsMenuOpen(false)}>Contact</Link>
-        
-        {user ? (
-          <>
-            {user.role === "owner" && (
-              <Link to="/owner-dashboard" onClick={() => setIsMenuOpen(false)}>
-                Owner Dashboard
-              </Link>
-            )}
-            {user.role === "tenant" && (
-              <Link to="/tenant-dashboard" onClick={() => setIsMenuOpen(false)}>
-                Tenant Dashboard
-              </Link>
-            )}
-            <button onClick={logout} className="logout-btn">
-              Logout
-            </button>
-          </>
-        ) : (
-          <Link to="/auth" onClick={() => setIsMenuOpen(false)} className="login-link">
-            Login / Register
-          </Link>
-        )}
-      </nav>
+        {/* Desktop Nav */}
+        <nav className="nav-desktop">
+          <Link to="/">Home</Link>
+          <Link to="/properties">Properties</Link>
+          <Link to="/contact">Contact</Link>
+          {user ? (
+            <>
+              {user.role === "owner" && <Link to="/owner-dashboard">Owner</Link>}
+              {user.role === "tenant" && <Link to="/tenant-dashboard">Tenant</Link>}
+              <button onClick={logout} className="logout-btn">Logout</button>
+            </>
+          ) : (
+            <Link to="/auth" className="login-btn">Login</Link>
+          )}
+        </nav>
 
-      {/* Mobile Menu Button */}
-      <button 
-        className="mobile-menu-btn" 
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        aria-label="Toggle menu"
-      >
-        <span className={`hamburger-line ${isMenuOpen ? 'active' : ''}`} />
-        <span className={`hamburger-line ${isMenuOpen ? 'active' : ''}`} />
-        <span className={`hamburger-line ${isMenuOpen ? 'active' : ''}`} />
-      </button>
-
-      {/* Mobile Menu Overlay */}
-      <div className={`mobile-menu ${isMenuOpen ? 'open' : ''}`}>
-        <nav className="mobile-nav-links">
-          <Link to="/" onClick={() => setIsMenuOpen(false)}>🏠 Home</Link>
-          <Link to="/properties" onClick={() => setIsMenuOpen(false)}>🏘️ Properties</Link>
-          <Link to="/contact" onClick={() => setIsMenuOpen(false)}>📞 Contact</Link>
-          
+        {/* Mobile Nav - VERTICAL STACK */}
+        <nav className="nav-mobile">
+          <Link to="/" className="nav-item">🏠 Home</Link>
+          <Link to="/properties" className="nav-item">🏘️ Properties</Link>
+          <Link to="/contact" className="nav-item">📞 Contact</Link>
           {user ? (
             <>
               {user.role === "owner" && (
-                <Link to="/owner-dashboard" onClick={() => setIsMenuOpen(false)}>
-                  👑 Owner Dashboard
-                </Link>
+                <Link to="/owner-dashboard" className="nav-item">👑 Owner</Link>
               )}
               {user.role === "tenant" && (
-                <Link to="/tenant-dashboard" onClick={() => setIsMenuOpen(false)}>
-                  📋 Tenant Dashboard
-                </Link>
+                <Link to="/tenant-dashboard" className="nav-item">📋 Tenant</Link>
               )}
-              <button onClick={() => { logout(); setIsMenuOpen(false); }} className="mobile-logout-btn">
-                🚪 Logout
-              </button>
+              <button onClick={logout} className="logout-mobile">🚪 Logout</button>
             </>
           ) : (
-            <Link to="/auth" onClick={() => setIsMenuOpen(false)} className="mobile-login-link">
-              🔐 Login / Register
-            </Link>
+            <Link to="/auth" className="nav-item login-mobile">🔐 Login</Link>
           )}
         </nav>
       </div>
