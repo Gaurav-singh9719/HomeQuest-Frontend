@@ -1,98 +1,107 @@
+// src/components/Navbar.jsx
 import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import "./Header.css";
+import { Menu, X } from "lucide-react";
 
-const Header = () => {
-  const { user, logout } = useAuth();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const Navbar = () => {
+  const [open, setOpen] = useState(false);
+  const [shadow, setShadow] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setShadow(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Prevent background scrolling when menu open
-  useEffect(() => {
-    document.body.style.overflow = mobileMenuOpen ? "hidden" : "auto";
-  }, [mobileMenuOpen]);
+  const navItems = [
+    { path: "/", label: "Home" },
+    { path: "/about", label: "About" },
+    { path: "/services", label: "Services" },
+    { path: "/gallery", label: "Gallery" },
+    { path: "/contact", label: "Contact" },
+  ];
 
   return (
-    <header className={`header ${isScrolled ? "scrolled" : ""}`}>
-      <div className="header-container">
-
+    <header
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        shadow ? "bg-white/90 shadow-sm backdrop-blur" : "bg-white"
+      }`}
+    >
+      <nav className="max-w-7xl mx-auto flex items-center justify-between p-4 lg:px-8">
         {/* Logo */}
-        <Link to="/" className="logo">
-          🏡 <span>HomeQuest</span>
+        <Link
+          to="/"
+          className="text-xl font-bold tracking-wide text-blue-600 hover:opacity-80"
+        >
+          Radhika SolarTech
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="nav-desktop">
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/properties">Properties</NavLink>
-          <NavLink to="/contact">Contact</NavLink>
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center gap-8">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `text-[15px] transition hover:text-blue-600 ${
+                  isActive ? "text-blue-600 font-semibold" : "text-gray-700"
+                }`
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
 
-          {user && (
-            <>
-              {user.role === "owner" && <NavLink to="/owner-dashboard">Owner</NavLink>}
-              {user.role === "tenant" && <NavLink to="/tenant-dashboard">Tenant</NavLink>}
-            </>
-          )}
-        </nav>
-
-        {/* Desktop Auth */}
-        <div className="auth-buttons-desktop">
-          {user ? (
-            <button className="logout-btn" onClick={logout}>Logout</button>
-          ) : (
-            <Link to="/auth" className="login-btn">Login</Link>
-          )}
+          {/* Login/Register Button */}
+          <Link
+            to="/login"
+            className="px-4 py-2 rounded-lg border border-blue-600 text-blue-600 text-sm
+                       hover:bg-blue-600 hover:text-white transition-all"
+          >
+            Login / Register
+          </Link>
         </div>
 
-        {/* Mobile Hamburger */}
-        <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          <span className={`hamburger-line ${mobileMenuOpen ? "open" : ""}`}></span>
-          <span className={`hamburger-line ${mobileMenuOpen ? "open" : ""}`}></span>
-          <span className={`hamburger-line ${mobileMenuOpen ? "open" : ""}`}></span>
+        {/* Mobile Menu Icon */}
+        <button
+          onClick={() => setOpen(!open)}
+          className="md:hidden text-gray-800"
+          aria-label="Toggle Menu"
+        >
+          {open ? <X size={28} /> : <Menu size={28} />}
         </button>
+      </nav>
 
-        {/* 🔥 Mobile Menu */}
-        <div className={`backdrop ${mobileMenuOpen ? "show" : ""}`} 
-          onClick={() => setMobileMenuOpen(false)}></div>
-
-        <nav className={`nav-mobile ${mobileMenuOpen ? "open" : ""}`}>
-          <NavLink to="/" onClick={() => setMobileMenuOpen(false)}>🏠 Home</NavLink>
-          <NavLink to="/properties" onClick={() => setMobileMenuOpen(false)}>🏘️ Properties</NavLink>
-          <NavLink to="/contact" onClick={() => setMobileMenuOpen(false)}>📞 Contact</NavLink>
-
-          {user ? (
-            <>
-              {user.role === "owner" &&
-                <NavLink to="/owner-dashboard" onClick={() => setMobileMenuOpen(false)}>
-                  👑 Owner Dashboard
-                </NavLink>
-              }
-              {user.role === "tenant" &&
-                <NavLink to="/tenant-dashboard" onClick={() => setMobileMenuOpen(false)}>
-                  📋 Tenant Dashboard
-                </NavLink>
-              }
-              <button className="logout-mobile"
-                onClick={() => { logout(); setMobileMenuOpen(false); }}>
-                🚪 Logout
-              </button>
-            </>
-          ) : (
-            <NavLink to="/auth" className="login-mobile" onClick={() => setMobileMenuOpen(false)}>
-              🔐 Login
+      {/* Mobile Menu */}
+      <div
+        className={`md:hidden bg-white shadow-md transition-all duration-300 overflow-hidden ${
+          open ? "max-h-96" : "max-h-0"
+        }`}
+      >
+        <div className="flex flex-col items-center gap-4 py-6">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={() => setOpen(false)}
+              className="text-gray-700 text-lg transition hover:text-blue-600"
+            >
+              {item.label}
             </NavLink>
-          )}
-        </nav>
+          ))}
+
+          <Link
+            to="/login"
+            onClick={() => setOpen(false)}
+            className="mt-2 px-6 py-2 rounded-lg border border-blue-600 text-blue-600 text-sm
+                       hover:bg-blue-600 hover:text-white transition-all"
+          >
+            Login / Register
+          </Link>
+        </div>
       </div>
     </header>
   );
 };
 
-export default Header;
+export default Navbar;
