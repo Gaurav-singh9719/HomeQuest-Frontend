@@ -1,22 +1,28 @@
-/* src/pages/TenantDashboard.css */
+/* src/pages/TenantDashboard.css - NO HORIZONTAL SCROLL */
+* { box-sizing: border-box; }
+
 .tenant-dashboard {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem 0;
+  padding: 2rem 1rem;
   font-family: 'Inter', -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .dashboard-header {
   text-align: center;
   margin-bottom: 3rem;
   color: white;
-  padding: 0 2rem;
+  padding: 0 1rem;
 }
 
-.header-content {
-  max-width: 800px;
-  margin: 0 auto;
-}
+.header-content { max-width: 800px; margin: 0 auto; }
 
 .dashboard-title {
   font-size: clamp(2.5rem, 5vw, 4rem);
@@ -28,20 +34,15 @@
   margin-bottom: 0.5rem;
 }
 
-.dashboard-subtitle {
-  font-size: 1.25rem;
-  opacity: 0.9;
-}
+.dashboard-subtitle { font-size: 1.25rem; opacity: 0.9; }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
   margin-bottom: 3rem;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 2rem;
+  padding: 0 1rem;
+  width: 100%;
 }
 
 .stat-card {
@@ -76,13 +77,11 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 24px;
-  margin: 0 2rem 3rem;
-  padding: 2.5rem;
+  margin: 0 0 3rem 0;
+  padding: 2.5rem 2rem;
   box-shadow: 0 25px 50px rgba(0,0,0,0.1);
   border: 1px solid rgba(255,255,255,0.3);
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
 }
 
 .section-title {
@@ -108,6 +107,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 2rem;
+  width: 100%;
+  padding: 0;
 }
 
 .property-card {
@@ -117,7 +118,6 @@
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
   transition: all 0.3s ease;
   border: 1px solid rgba(255,255,255,0.2);
-  cursor: pointer;
 }
 
 .property-card:hover {
@@ -176,10 +176,28 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
 }
-.apply-button:hover {
+.apply-button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 15px 35px rgba(79,70,229,0.4);
+}
+.apply-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.apply-button.loading::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .applied-badge {
@@ -219,10 +237,7 @@
   color: #1f2937;
   font-size: 1.1rem;
 }
-.app-property p {
-  margin: 0;
-  color: #6b7280;
-}
+.app-property p { margin: 0; color: #6b7280; }
 
 .app-status {
   display: flex;
@@ -240,6 +255,12 @@
 .status-pending { background: #fef3c7; color: #d97706; }
 .status-accepted { background: #d1fae5; color: #10b981; }
 .status-rejected { background: #fee2e2; color: #ef4444; }
+
+.app-price {
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 1.1rem;
+}
 
 .empty-state {
   text-align: center;
@@ -267,17 +288,62 @@
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
 }
+
+/* TOAST NOTIFICATIONS */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  z-index: 10000;
+  transform: translateX(400px);
+  animation: slideIn 0.3s ease forwards;
+}
+.notification-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+.notification-error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+@keyframes slideIn { to { transform: translateX(0); } }
+@keyframes fade-out { to { opacity: 0; transform: translateX(400px); } }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* Responsive */
+.notification.fade-out {
+  animation: fade-out 0.3s ease forwards;
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-  .property-list { grid-template-columns: 1fr; gap: 1.5rem; }
-  .properties-section, .applications-section { margin: 0 1rem 2rem; padding: 2rem; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); padding: 0 1rem; }
+  .property-list { 
+    grid-template-columns: 1fr !important; 
+    gap: 1.5rem; 
+  }
+  .properties-section, .applications-section { 
+    margin: 0 0 2rem 0; 
+    padding: 1.5rem 1rem; 
+  }
+  .stats-grid { 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 1rem; 
+    padding: 0 0.5rem; 
+  }
+  .tenant-dashboard { padding: 1rem 0.5rem; }
 }
 
 @media (max-width: 480px) {
   .stats-grid { grid-template-columns: 1fr; }
-  .application-item { flex-direction: column; align-items: flex-start; gap: 1rem; text-align: center; }
+  .application-item { 
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 1rem; 
+    text-align: center; 
+  }
   .app-status { align-items: center; }
 }
