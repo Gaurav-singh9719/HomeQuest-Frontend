@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import "./Contact.css";
 
-const API = process.env.REACT_APP_API_URL;
+const API = process.env.REACT_APP_API_URL; // backend URL e.g. http://localhost:5000
 
 const Contact = () => {
   const { user } = useAuth();
@@ -24,9 +24,9 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.email || !formData.message.trim()) {
-      setStatus("Please fill required fields");
+      setStatus("❌ Please fill required fields");
       return;
     }
 
@@ -43,7 +43,7 @@ const Contact = () => {
       });
 
       const data = await res.json();
-      
+
       if (res.ok) {
         setStatus("✅ Message sent successfully! We'll get back to you soon.");
         setFormData({
