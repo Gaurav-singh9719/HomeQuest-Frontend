@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Header.css";
 
@@ -9,20 +9,20 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
+  // Prevent background scrolling when menu open
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "auto";
+  }, [mobileMenuOpen]);
 
   return (
-    <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
+    <header className={`header ${isScrolled ? "scrolled" : ""}`}>
       <div className="header-container">
+
         {/* Logo */}
         <Link to="/" className="logo">
           🏡 <span>HomeQuest</span>
@@ -30,67 +30,64 @@ const Header = () => {
 
         {/* Desktop Nav */}
         <nav className="nav-desktop">
-          <Link to="/">Home</Link>
-          <Link to="/properties">Properties</Link>
-          <Link to="/contact">Contact</Link>
+          <NavLink to="/">Home</NavLink>
+          <NavLink to="/properties">Properties</NavLink>
+          <NavLink to="/contact">Contact</NavLink>
+
           {user && (
             <>
-              {user.role === "owner" && <Link to="/owner-dashboard">Owner</Link>}
-              {user.role === "tenant" && <Link to="/tenant-dashboard">Tenant</Link>}
+              {user.role === "owner" && <NavLink to="/owner-dashboard">Owner</NavLink>}
+              {user.role === "tenant" && <NavLink to="/tenant-dashboard">Tenant</NavLink>}
             </>
           )}
         </nav>
 
-        {/* Desktop Auth Buttons */}
+        {/* Desktop Auth */}
         <div className="auth-buttons-desktop">
           {user ? (
-            <button onClick={logout} className="logout-btn">Logout</button>
+            <button className="logout-btn" onClick={logout}>Logout</button>
           ) : (
             <Link to="/auth" className="login-btn">Login</Link>
           )}
         </div>
 
         {/* Mobile Hamburger */}
-        <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
-          <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`}></span>
-          <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`}></span>
-          <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`}></span>
+        <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          <span className={`hamburger-line ${mobileMenuOpen ? "open" : ""}`}></span>
+          <span className={`hamburger-line ${mobileMenuOpen ? "open" : ""}`}></span>
+          <span className={`hamburger-line ${mobileMenuOpen ? "open" : ""}`}></span>
         </button>
 
-        {/* Mobile Dropdown Menu */}
-        <nav className={`nav-mobile ${mobileMenuOpen ? 'open' : ''}`}>
-          <Link to="/" className="nav-item" onClick={() => setMobileMenuOpen(false)}>
-            🏠 Home
-          </Link>
-          <Link to="/properties" className="nav-item" onClick={() => setMobileMenuOpen(false)}>
-            🏘️ Properties
-          </Link>
-          <Link to="/contact" className="nav-item" onClick={() => setMobileMenuOpen(false)}>
-            📞 Contact
-          </Link>
+        {/* 🔥 Mobile Menu */}
+        <div className={`backdrop ${mobileMenuOpen ? "show" : ""}`} 
+          onClick={() => setMobileMenuOpen(false)}></div>
+
+        <nav className={`nav-mobile ${mobileMenuOpen ? "open" : ""}`}>
+          <NavLink to="/" onClick={() => setMobileMenuOpen(false)}>🏠 Home</NavLink>
+          <NavLink to="/properties" onClick={() => setMobileMenuOpen(false)}>🏘️ Properties</NavLink>
+          <NavLink to="/contact" onClick={() => setMobileMenuOpen(false)}>📞 Contact</NavLink>
+
           {user ? (
             <>
-              {user.role === "owner" && (
-                <Link to="/owner-dashboard" className="nav-item" onClick={() => setMobileMenuOpen(false)}>
+              {user.role === "owner" &&
+                <NavLink to="/owner-dashboard" onClick={() => setMobileMenuOpen(false)}>
                   👑 Owner Dashboard
-                </Link>
-              )}
-              {user.role === "tenant" && (
-                <Link to="/tenant-dashboard" className="nav-item" onClick={() => setMobileMenuOpen(false)}>
+                </NavLink>
+              }
+              {user.role === "tenant" &&
+                <NavLink to="/tenant-dashboard" onClick={() => setMobileMenuOpen(false)}>
                   📋 Tenant Dashboard
-                </Link>
-              )}
-              <button 
-                onClick={() => { logout(); setMobileMenuOpen(false); }} 
-                className="logout-mobile"
-              >
+                </NavLink>
+              }
+              <button className="logout-mobile"
+                onClick={() => { logout(); setMobileMenuOpen(false); }}>
                 🚪 Logout
               </button>
             </>
           ) : (
-            <Link to="/auth" className="nav-item login-mobile" onClick={() => setMobileMenuOpen(false)}>
+            <NavLink to="/auth" className="login-mobile" onClick={() => setMobileMenuOpen(false)}>
               🔐 Login
-            </Link>
+            </NavLink>
           )}
         </nav>
       </div>
