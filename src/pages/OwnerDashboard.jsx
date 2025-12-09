@@ -109,6 +109,21 @@ const OwnerDashboard = () => {
     }
   };
 
+  // ✅ FIXED: Only PENDING requests count
+  const getPendingRequestsCount = () => {
+    return properties.reduce((sum, p) => {
+      const pendingRequests = p.requests?.filter(req => req.status === 'pending') || [];
+      return sum + pendingRequests.length;
+    }, 0);
+  };
+
+  // ✅ FIXED: Only properties with PENDING requests
+  const getActiveTenantsCount = () => {
+    return properties.filter(p => 
+      p.requests?.some(req => req.status === 'accepted')
+    ).length;
+  };
+
   return (
     <div className="owner-dashboard">
       {/* Hero Header */}
@@ -117,7 +132,7 @@ const OwnerDashboard = () => {
         <p className="dashboard-subtitle">Manage your properties & tenant requests</p>
       </div>
 
-      {/* Stats Cards */}
+      {/* FIXED Stats Cards */}
       <div className="stats-grid">
         <div className="stat-card">
           <div className="stat-icon">🏠</div>
@@ -126,14 +141,12 @@ const OwnerDashboard = () => {
         </div>
         <div className="stat-card">
           <div className="stat-icon">📋</div>
-          <div className="stat-number">
-            {properties.reduce((sum, p) => sum + (p.requests?.length || 0), 0)}
-          </div>
+          <div className="stat-number">{getPendingRequestsCount()}</div> {/* ✅ FIXED */}
           <div className="stat-label">Pending Requests</div>
         </div>
         <div className="stat-card">
           <div className="stat-icon">⭐</div>
-          <div className="stat-number">{properties.filter(p => p.requests?.some(r => r.status === 'accepted')).length}</div>
+          <div className="stat-number">{getActiveTenantsCount()}</div> {/* ✅ FIXED */}
           <div className="stat-label">Active Tenants</div>
         </div>
       </div>
@@ -220,44 +233,47 @@ const OwnerDashboard = () => {
         </div>
       </div>
 
-      {/* Properties Grid - VERTICAL */}
+      {/* Properties Grid */}
       <div className="properties-section">
         <h2 className="section-title">
           📋 Your Properties ({properties.length})
         </h2>
         {properties.length > 0 ? (
           <div className="properties-grid">
-            {properties.map((p) => (
-              <div key={p._id} className="modern-property-card">
-                {p.images?.[0] && (
-                  <div className="property-image">
-                    <img src={p.images[0]} alt={p.title} />
-                  </div>
-                )}
-                <div className="property-content">
-                  <div className="property-header">
-                    <h3 className="property-title">{p.title}</h3>
-                    <div className="property-price">
-                      ₹{parseInt(p.price).toLocaleString()}/month
+            {properties.map((p) => {
+              // ✅ Only show PENDING requests
+              const pendingRequests = p.requests?.filter(req => req.status === 'pending') || [];
+              
+              return (
+                <div key={p._id} className="modern-property-card">
+                  {p.images?.[0] && (
+                    <div className="property-image">
+                      <img src={p.images[0]} alt={p.title} />
                     </div>
-                  </div>
-                  <p className="property-address">{p.address}</p>
-                  <p className="property-desc">{p.description}</p>
-                  
-                  {p.requests?.length > 0 && (
-                    <div className="requests-section">
-                      <h4>📩 Tenant Requests ({p.requests.length})</h4>
-                      <div className="requests-list">
-                        {p.requests.map((req) => (
-                          <div key={req._id} className="request-item">
-                            <div className="request-info">
-                              <strong>{req.tenant?.name}</strong>
-                              <span>{req.tenant?.email}</span>
-                              <span className={`status-badge status-${req.status}`}>
-                                {req.status}
-                              </span>
-                            </div>
-                            {req.status === "pending" && (
+                  )}
+                  <div className="property-content">
+                    <div className="property-header">
+                      <h3 className="property-title">{p.title}</h3>
+                      <div className="property-price">
+                        ₹{parseInt(p.price).toLocaleString()}/month
+                      </div>
+                    </div>
+                    <p className="property-address">{p.address}</p>
+                    <p className="property-desc">{p.description}</p>
+                    
+                    {pendingRequests.length > 0 && (  // ✅ Only PENDING show
+                      <div className="requests-section">
+                        <h4>📩 Pending Requests ({pendingRequests.length})</h4>
+                        <div className="requests-list">
+                          {pendingRequests.map((req) => (  // ✅ Only PENDING map
+                            <div key={req._id} className="request-item">
+                              <div className="request-info">
+                                <strong>{req.tenant?.name}</strong>
+                                <span>{req.tenant?.email}</span>
+                                <span className={`status-badge status-${req.status}`}>
+                                  {req.status}
+                                </span>
+                              </div>
                               <div className="request-actions">
                                 <button 
                                   className="accept-btn" 
@@ -272,15 +288,15 @@ const OwnerDashboard = () => {
                                   ❌ Reject
                                 </button>
                               </div>
-                            )}
-                          </div>
-                        ))}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="empty-state">
