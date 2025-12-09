@@ -1,70 +1,89 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import "./TenantDashboard.css";
 
-const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API = process.env.REACT_APP_API_URL;
 
 const TenantDashboard = () => {
   const { user, token } = useAuth();
   const [properties, setProperties] = useState([]);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isApplying, setIsApplying] = useState(null);
+  const [stats, setStats] = useState({
+    totalProperties: 0,
+    pendingApps: 0,
+    approvedApps: 0
+  });
 
-  useEffect(() => {
-    fetchProperties();
-    fetchApplications();
-  }, []);
-
-  const fetchProperties = async () => {
+  const fetchProperties = useCallback(async () => {
     try {
       const res = await fetch(`${API}/api/tenant/explore`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
-      if (res.ok) setProperties(data);
+      if (res.ok) {
+        setProperties(data);
+        setStats(prev => ({ ...prev, totalProperties: data.length }));
+      }
     } catch (err) {
       console.error("Fetch properties error:", err);
     }
-  };
+  }, [token]);
 
-  const fetchApplications = async () => {
+  const fetchApplications = useCallback(async () => {
     try {
-      setLoading(true);
       const res = await fetch(`${API}/api/tenant/applications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (res.ok) setApplications(data);
+      if (res.ok) {
+        setApplications(data);
+        setStats({
+          totalProperties: properties.length,
+          pendingApps: data.filter(app => app.status === 'pending').length,
+          approvedApps: data.filter(app => app.status === 'accepted').length
+        });
+      }
     } catch (err) {
       console.error("Fetch applications error:", err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, properties.length]);
 
-  // ✅ ORIGINAL WORKING APPLY FUNCTION - NO CHANGES!
-  const applyForProperty = (propertyId) => {
-    fetch(`${API}/api/tenant/apply`, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json", 
-        Authorization: `Bearer ${token}` 
-      },
-      body: JSON.stringify({ propertyId }),
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.message === 'Applied successfully') {
-        alert('✅ Application sent successfully!');
-        fetchApplications(); // Refresh list
+  useEffect(() => {
+    fetchProperties();
+    fetchApplications();
+  }, [fetchProperties, fetchApplications]);
+
+  // ✅ ORIGINAL WORKING APPLY FUNCTION
+  const applyForProperty = async (propertyId) => {
+    setIsApplying(propertyId);
+    
+    try {
+      const res = await fetch(`${API}/api/tenant/apply`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json", 
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ propertyId }),
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        alert("✅ Application sent successfully!");
+        fetchApplications();
       } else {
-        alert('❌ ' + (data.message || 'Server error'));
+        alert(`❌ ${data.message || "Failed to apply"}`);
       }
-    })
-    .catch(err => {
-      console.error(err);
-      alert('❌ Server error');
-    });
+    } catch (err) {
+      alert("❌ Network error. Please try again.");
+    } finally {
+      setIsApplying(null);
+    }
   };
 
   const isApplied = (propertyId) => {
@@ -72,53 +91,125 @@ const TenantDashboard = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="tenant-dashboard">
+        <div className="dashboard-container">
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Loading dashboard...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="tenant-dashboard">
-      <div className="container">
-        <h1>Welcome, {user?.name}!</h1>
-        
-        <section className="properties">
-          <h2>Available Properties</h2>
-          <div className="property-grid">
-            {properties.map((p) => (
-              <div key={p._id} className="property-card">
-                {p.images?.[0] && (
-                  <img src={p.images[0]} alt={p.title} className="property-img" />
-                )}
-                <div className="property-info">
-                  <h3>{p.title}</h3>
-                  <p>{p.address}</p>
-                  <div className="price">₹{p.price.toLocaleString()}/month</div>
-                  <p>{p.description}</p>
-                  
-                  {isApplied(p._id) ? (
-                    <div className="applied">✅ Already Applied</div>
-                  ) : (
-                    <button 
-                      className="apply-btn"
-                      onClick={() => applyForProperty(p._id)}
-                    >
-                      Apply Now
-                    </button>
+      <div className="dashboard-container">
+        {/* Hero Header */}
+        <div className="dashboard-header">
+          <div className="header-content">
+            <h1 className="dashboard-title">Welcome, {user?.name} 👋</h1>
+            <p className="dashboard-subtitle">Find your dream home and track applications</p>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-icon">🏠</div>
+            <div className="stat-number">{stats.totalProperties}</div>
+            <div className="stat-label">Available Properties</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">⏳</div>
+            <div className="stat-number">{stats.pendingApps}</div>
+            <div className="stat-label">Pending Applications</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">✅</div>
+            <div className="stat-number">{stats.approvedApps}</div>
+            <div className="stat-label">Approved Rentals</div>
+          </div>
+        </div>
+
+        {/* Properties Section */}
+        <section className="properties-section">
+          <h2 className="section-title">
+            🏘️ Available Properties 
+            <span className="section-count">({properties.length})</span>
+          </h2>
+          <div className="property-list">
+            {properties.length > 0 ? (
+              properties.map((p) => (
+                <div className="property-card" key={p._id}>
+                  {p.images?.[0] && (
+                    <div className="property-image">
+                      <img src={p.images[0]} alt={p.title} />
+                    </div>
                   )}
+                  <div className="property-content">
+                    <h4 className="property-title">{p.title}</h4>
+                    <p className="property-address">{p.address}</p>
+                    <div className="property-price">₹{p.price.toLocaleString()}/month</div>
+                    <p className="property-desc">{p.description}</p>
+                    
+                    {isApplied(p._id) ? (
+                      <div className="applied-badge">
+                        ✅ Already Applied
+                      </div>
+                    ) : (
+                      <button 
+                        className={`apply-button ${isApplying === p._id ? 'loading' : ''}`}
+                        onClick={() => applyForProperty(p._id)}
+                        disabled={isApplying === p._id}
+                      >
+                        {isApplying === p._id ? 'Applying...' : 'Apply Now'}
+                      </button>
+                    )}
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="empty-state">
+                <div className="empty-icon">🏠</div>
+                <p>No properties available right now.</p>
               </div>
-            ))}
+            )}
           </div>
         </section>
 
-        <section className="applications">
-          <h2>My Applications ({applications.length})</h2>
-          {applications.map((app) => (
-            <div key={app._id} className="app-item">
-              <h4>{app.property?.title}</h4>
-              <p>{app.property?.address}</p>
-              <span className={`status ${app.status}`}>{app.status.toUpperCase()}</span>
+        {/* Applications Section */}
+        <section className="applications-section">
+          <h2 className="section-title">
+            📋 My Applications
+            <span className="section-count">({applications.length})</span>
+          </h2>
+          {applications.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">📄</div>
+              <p>No applications yet. Apply for properties above!</p>
             </div>
-          ))}
+          ) : (
+            <div className="applications-list">
+              {applications.map((a) => (
+                <div key={a._id} className={`application-item status-${a.status}`}>
+                  <div className="app-property">
+                    <h4>{a.property?.title}</h4>
+                    <p>{a.property?.address}</p>
+                  </div>
+                  <div className="app-status">
+                    <span className={`status-badge status-${a.status}`}>
+                      {a.status.toUpperCase()}
+                    </span>
+                    <div className="app-price">
+                      ₹{a.property?.price.toLocaleString()}/month
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </div>
