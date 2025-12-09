@@ -117,11 +117,17 @@ const OwnerDashboard = () => {
     }, 0);
   };
 
-  // ✅ FIXED: Only properties with PENDING requests
+  // ✅ FIXED: Unique Active Tenants (1 tenant = 1 count)
   const getActiveTenantsCount = () => {
-    return properties.filter(p => 
-      p.requests?.some(req => req.status === 'accepted')
-    ).length;
+    const uniqueTenants = new Set();
+    properties.forEach(p => {
+      p.requests?.forEach(req => {
+        if (req.status === 'accepted' && req.tenant?._id) {
+          uniqueTenants.add(req.tenant._id);
+        }
+      });
+    });
+    return uniqueTenants.size;
   };
 
   return (
@@ -141,12 +147,12 @@ const OwnerDashboard = () => {
         </div>
         <div className="stat-card">
           <div className="stat-icon">📋</div>
-          <div className="stat-number">{getPendingRequestsCount()}</div> {/* ✅ FIXED */}
+          <div className="stat-number">{getPendingRequestsCount()}</div>
           <div className="stat-label">Pending Requests</div>
         </div>
         <div className="stat-card">
           <div className="stat-icon">⭐</div>
-          <div className="stat-number">{getActiveTenantsCount()}</div> {/* ✅ FIXED */}
+          <div className="stat-number">{getActiveTenantsCount()}</div> {/* ✅ NOW 1 TENANT = 1 */}
           <div className="stat-label">Active Tenants</div>
         </div>
       </div>
@@ -241,7 +247,6 @@ const OwnerDashboard = () => {
         {properties.length > 0 ? (
           <div className="properties-grid">
             {properties.map((p) => {
-              // ✅ Only show PENDING requests
               const pendingRequests = p.requests?.filter(req => req.status === 'pending') || [];
               
               return (
@@ -261,11 +266,11 @@ const OwnerDashboard = () => {
                     <p className="property-address">{p.address}</p>
                     <p className="property-desc">{p.description}</p>
                     
-                    {pendingRequests.length > 0 && (  // ✅ Only PENDING show
+                    {pendingRequests.length > 0 && (
                       <div className="requests-section">
                         <h4>📩 Pending Requests ({pendingRequests.length})</h4>
                         <div className="requests-list">
-                          {pendingRequests.map((req) => (  // ✅ Only PENDING map
+                          {pendingRequests.map((req) => (
                             <div key={req._id} className="request-item">
                               <div className="request-info">
                                 <strong>{req.tenant?.name}</strong>
