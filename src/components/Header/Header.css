@@ -4,7 +4,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* HEADER BASE */
+/* HEADER */
 .header {
   background: white;
   position: sticky;
@@ -45,8 +45,10 @@
   text-decoration: none;
   font-weight: 600;
   color: #374151;
+  transition: 0.3s ease;
 }
-.nav-desktop a.active {
+.nav-desktop a.active,
+.nav-desktop a:hover {
   color: #4f46e5;
   border-bottom: 2px solid #4f46e5;
 }
@@ -55,6 +57,38 @@
 .auth-buttons-desktop {
   display: flex;
   gap: 1rem;
+}
+
+/* LOGIN / REGISTER BUTTON DESKTOP */
+.login-register-btn {
+  padding: 8px 18px;
+  border-radius: 6px;
+  background: #4f46e5;
+  border: 2px solid #4f46e5;
+  color: #fff !important;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+.login-register-btn:hover {
+  background: #fff;
+  color: #4f46e5 !important;
+}
+
+/* LOGOUT BUTTON */
+.logout-btn {
+  background: transparent;
+  padding: 8px 16px;
+  font-weight: 600;
+  border: 2px solid #e11d48;
+  color: #e11d48;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+.logout-btn:hover {
+  background: #e11d48;
+  color: #fff;
 }
 
 /* MOBILE MENU BTN */
@@ -75,7 +109,7 @@
 .hamburger-line.open:nth-child(2) { opacity: 0; }
 .hamburger-line.open:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
 
-/* MOBILE OVERLAY */
+/* BACKDROP */
 .backdrop {
   position: fixed;
   top: 0; left: 0;
@@ -91,7 +125,7 @@
   visibility: visible;
 }
 
-/* MOBILE MENU */
+/* MOBILE NAV */
 .nav-mobile {
   position: fixed;
   right: -100%;
@@ -120,9 +154,25 @@
   color: #4f46e5;
 }
 
+/* MOBILE LOGIN BUTTON */
+.login-register-mobile {
+  padding: 12px;
+  background: #4f46e5;
+  border-radius: 6px;
+  color: #fff !important;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  display: inline-block;
+}
+.login-register-mobile:hover {
+  opacity: 0.85;
+}
+
 /* RESPONSIVE */
 @media (max-width: 900px) {
-  .nav-desktop, .auth-buttons-desktop {
+  .nav-desktop,
+  .auth-buttons-desktop {
     display: none;
   }
   .mobile-menu-btn {
