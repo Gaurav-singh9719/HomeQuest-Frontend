@@ -69,7 +69,7 @@ const TenantDashboard = () => {
       const data = await res.json();
       if (res.ok) {
         alert("✅ Application sent successfully!");
-        fetchApplications(); // Refresh applications
+        fetchApplications();
       } else {
         alert(`❌ ${data.message || "Failed to apply"}`);
       }
@@ -97,7 +97,6 @@ const TenantDashboard = () => {
 
   return (
     <div className="tenant-dashboard">
-      {/* Hero Header */}
       <div className="dashboard-header">
         <div className="header-content">
           <h1 className="dashboard-title">Welcome, {user?.name} 👋</h1>
@@ -105,7 +104,7 @@ const TenantDashboard = () => {
         </div>
       </div>
 
-      {/* Stats Cards */}
+     
       <div className="stats-grid">
         <div className="stat-card">
           <div className="stat-icon">🏠</div>
@@ -124,7 +123,6 @@ const TenantDashboard = () => {
         </div>
       </div>
 
-      {/* Properties Section */}
       <section className="properties-section">
         <h2 className="section-title">
           🏘️ Available Properties 
@@ -169,7 +167,6 @@ const TenantDashboard = () => {
         </div>
       </section>
 
-      {/* Applications Section */}
       <section className="applications-section">
         <h2 className="section-title">
           📋 My Applications
