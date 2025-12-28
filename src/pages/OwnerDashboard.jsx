@@ -109,7 +109,7 @@ const OwnerDashboard = () => {
     }
   };
 
-  // ✅ FIXED: Only PENDING requests count
+
   const getPendingRequestsCount = () => {
     return properties.reduce((sum, p) => {
       const pendingRequests = p.requests?.filter(req => req.status === 'pending') || [];
@@ -117,7 +117,7 @@ const OwnerDashboard = () => {
     }, 0);
   };
 
-  // ✅ FIXED: Unique Active Tenants (1 tenant = 1 count)
+
   const getActiveTenantsCount = () => {
     const uniqueTenants = new Set();
     properties.forEach(p => {
@@ -132,13 +132,13 @@ const OwnerDashboard = () => {
 
   return (
     <div className="owner-dashboard">
-      {/* Hero Header */}
+   
       <div className="dashboard-header">
         <h1 className="dashboard-title">Welcome Back, {user?.name}</h1>
         <p className="dashboard-subtitle">Manage your properties & tenant requests</p>
       </div>
 
-      {/* FIXED Stats Cards */}
+
       <div className="stats-grid">
         <div className="stat-card">
           <div className="stat-icon">🏠</div>
@@ -152,12 +152,12 @@ const OwnerDashboard = () => {
         </div>
         <div className="stat-card">
           <div className="stat-icon">⭐</div>
-          <div className="stat-number">{getActiveTenantsCount()}</div> {/* ✅ NOW 1 TENANT = 1 */}
+          <div className="stat-number">{getActiveTenantsCount()}</div>
           <div className="stat-label">Active Tenants</div>
         </div>
       </div>
 
-      {/* Modern Add Property Form */}
+
       <div className="add-property-section">
         <h2 className="section-title">
           ➕ Add New Property
@@ -239,7 +239,7 @@ const OwnerDashboard = () => {
         </div>
       </div>
 
-      {/* Properties Grid */}
+   
       <div className="properties-section">
         <h2 className="section-title">
           📋 Your Properties ({properties.length})
