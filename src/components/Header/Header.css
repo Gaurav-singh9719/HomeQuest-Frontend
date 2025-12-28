@@ -1,10 +1,8 @@
-/* RESET */
+
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
-
-/* HEADER */
 .header {
   background: white;
   position: sticky;
@@ -24,8 +22,6 @@
   justify-content: space-between;
   align-items: center;
 }
-
-/* LOGO */
 .logo {
   font-size: 1.45rem;
   font-weight: 800;
@@ -35,8 +31,6 @@
   gap: 0.4rem;
   color: #4f46e5;
 }
-
-/* DESKTOP NAV */
 .nav-desktop {
   display: flex;
   gap: 1.8rem;
@@ -52,14 +46,10 @@
   color: #4f46e5;
   border-bottom: 2px solid #4f46e5;
 }
-
-/* AUTH BUTTON */
 .auth-buttons-desktop {
   display: flex;
   gap: 1rem;
 }
-
-/* LOGIN / REGISTER BUTTON DESKTOP */
 .login-register-btn {
   padding: 8px 18px;
   border-radius: 6px;
@@ -76,7 +66,6 @@
   color: #4f46e5 !important;
 }
 
-/* LOGOUT BUTTON */
 .logout-btn {
   background: transparent;
   padding: 8px 16px;
@@ -91,7 +80,6 @@
   color: #fff;
 }
 
-/* MOBILE MENU BTN */
 .mobile-menu-btn {
   display: none;
   flex-direction: column;
@@ -109,7 +97,6 @@
 .hamburger-line.open:nth-child(2) { opacity: 0; }
 .hamburger-line.open:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
 
-/* BACKDROP */
 .backdrop {
   position: fixed;
   top: 0; left: 0;
@@ -125,7 +112,6 @@
   visibility: visible;
 }
 
-/* MOBILE NAV */
 .nav-mobile {
   position: fixed;
   right: -100%;
@@ -154,7 +140,6 @@
   color: #4f46e5;
 }
 
-/* MOBILE LOGIN BUTTON */
 .login-register-mobile {
   padding: 12px;
   background: #4f46e5;
@@ -169,7 +154,6 @@
   opacity: 0.85;
 }
 
-/* RESPONSIVE */
 @media (max-width: 900px) {
   .nav-desktop,
   .auth-buttons-desktop {
