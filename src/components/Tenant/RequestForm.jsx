@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useAuth } from "../../context/AuthContext";  // ← ADD ये import
+import { useAuth } from "../../context/AuthContext";  
 
-const RequestForm = ({ propertyId, onSuccess }) => {  // ← propertyId prop receive करो
+const RequestForm = ({ propertyId, onSuccess }) => { 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const { token } = useAuth();  // ← Auth token लो
+  const { token } = useAuth();  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ const RequestForm = ({ propertyId, onSuccess }) => {  // ← propertyId prop rec
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ 
-          propertyId: propertyId  // ← Backend को propertyId भेजो
+          propertyId: propertyId 
         }),
       });
 
@@ -32,7 +32,7 @@ const RequestForm = ({ propertyId, onSuccess }) => {  // ← propertyId prop rec
       if (res.ok) {
         alert("✅ Request sent successfully!");
         setMessage("");
-        onSuccess?.();  // Parent को refresh signal भेजो
+        onSuccess?.();  
       } else {
         alert(`❌ Error: ${data.message || "Failed to apply"}`);
       }
