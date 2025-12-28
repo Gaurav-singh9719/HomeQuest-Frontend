@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import "./Contact.css";
 
-const API = process.env.REACT_APP_API_URL; // backend URL e.g. http://localhost:5000
+const API = process.env.REACT_APP_API_URL; 
 
 const Contact = () => {
   const { user } = useAuth();
